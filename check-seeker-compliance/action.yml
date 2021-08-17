@@ -1,0 +1,16 @@
+name: 'Check Seeker Compliance'
+description: 'Check Seeker Compliance Policy status and optionally fail the build if not compliant.'
+author: 'Scott Tolley'
+inputs:
+  seekerServerURL: 
+    description: 'Seeker Server URL - will fall back to the environment variable SEEKER_SERVER_URL if not set.'
+  seekerProjectKey: 
+    description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
+  seekerAPIToken:
+    description: 'Seeker API Token - you should store your Seeker API Token securely as an ecrypted secret.'
+  failBuildIfNotInCompliance:
+    description: 'Boolean - fail the build if ths Seeker Compliance Policy check fails.'
+    default: false
+runs:
+  using: 'node12'
+  main: '../lib/check-seeker-compliance.js'

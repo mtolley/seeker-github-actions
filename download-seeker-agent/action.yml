@@ -1,0 +1,16 @@
+name: 'Download Seeker Agent'
+description: 'Download the Seeker agent binary from the Seeker server.'
+author: 'Scott Tolley'
+inputs:
+  seekerServerURL: 
+    description: 'Seeker Server URL - will fall back to the environment variable SEEKER_SERVER_URL if not set.'
+    required: true
+  seekerProjectKey: 
+    description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
+    required: true
+  technology:
+    description: 'Agent technology - one of JAVA, DOTNETCORE, DOTNET, NODEJS, PHP, GO, PYTHON'
+    required: true
+runs:
+  using: 'node12'
+  main: '../lib/download-seeker-agent.js'

@@ -1,0 +1,14 @@
+name: 'Seeker Compliance Report'
+description: 'Download Seeker Compliance Report'
+author: 'Scott Tolley'
+inputs:
+  seekerServerURL: 
+    description: 'Seeker Server URL - will fall back to the environment variable SEEKER_SERVER_URL if not set.'
+  seekerProjectKey: 
+    description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
+  seekerAPIToken:
+    description: 'Seeker API Token - will fall back to the environment variable SEEKER_API_TOKEN if not set.'
+
+runs:
+  using: 'node12'
+  main: '../lib/seeker-compliance-report.js'
