@@ -1,0 +1,42 @@
+# Seeker Compliance Reporting
+# ###########################
+#
+# This action packages up check-seeker-compliance to determine whether or not the Seeker project is
+# in compliance after running all the tests, and seeker-compliance-report - optionally, if
+# generateComplianceReportPDF is set to true - to generate a PDF compliance report artefact.
+
+name: 'Seeker Compliance Reporting'
+description: 'Check Seeker Compliance policies. Optionally: download the Seeker Compliance Report and/or fail the build action.'
+author: 'Scott Tolley'
+inputs:
+  seekerServerURL: 
+    description: 'Seeker Server URL - will fall back to the environment variable SEEKER_SERVER_URL if not set.'
+  seekerProjectKey: 
+    description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
+  seekerAPIToken:
+    description: 'Seeker API Token - will fall back to the environment variable SEEKER_API_TOKEN if not set.'
+  generateComplianceReportPDF:
+    description: 'The Seeker Compliance Report will be generated and added as a build artefact.'
+    default: false
+  failBuildIfNotInCompliance:
+    description: 'Fail the build action if the Seeker Compliance Policy check fails.'
+    default: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate Seeker Compliance Report
+    uses: mtolley/seeker-github-actions/seeker-compliance-report@v1.1
+      with:
+        seekerServerURL: ${{ inputs.seekerServerURL }}
+        seekerProjectKey: ${{ inputs.seekerProjectKey }}
+        seekerAPIToken: ${{ inputs.seekerAPIToken }}        
+        generateComplianceReportPDF: ${{ inputs.generateComplianceReportPDF }}
+
+    - name: Seeker Compliance Check
+    uses: mtolley/seeker-github-actions/check-seeker-compliance@v1.1
+      with:
+        seekerServerURL: ${{ inputs.seekerServerURL }}
+        seekerProjectKey: ${{ inputs.seekerProjectKey }}
+        seekerAPIToken: ${{ inputs.seekerAPIToken }}        
+        failBuildIfNotInCompliance: ${{ inputs.failBuildIfNotInCompliance }}
