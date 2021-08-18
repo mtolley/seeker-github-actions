@@ -10,30 +10,20 @@ async function run(): Promise<void> {
 
     const seekerServerURL = getInputOrEnvironmentVariable(
       'seekerServerUrl',
-      'SEEKER_SERVER_URL'
+      'SEEKER_SERVER_URL',
+      true // required 
     )
     const seekerProjectKey = getInputOrEnvironmentVariable(
       'seekerProjectKey',
-      'SEEKER_PROJECT_KEY'
+      'SEEKER_PROJECT_KEY',
+      true // required
     )
     const seekerAPIToken = getInputOrEnvironmentVariable(
       'seekerAPIToken',
-      'SEEKER_API_TOKEN'
+      'SEEKER_API_TOKEN',
+      true // required
     )
     
-    core.info(`Seeker Server URL: ${seekerServerURL}`)
-    core.info(`Seeker Project Key: ${seekerProjectKey}`)
-    
-    if (!seekerServerURL) { 
-      core.error("The Seeker Server URL must be provided with the seekerServerURL input or via the SEEKER_SERVER_URL environment variable.")
-    }
-    if (!seekerProjectKey) {
-      core.error("The Seeker Project Key must be provided with the seekerProjectKey input or via the SEEKER_PROJECT_KEY environment variable.")
-    }
-    if (!seekerAPIToken) {
-      core.error("The Seeker API Token must be provided with the seekerAPIToken input. You should store your Seeker API Token securely as an ecrypted secret.")
-    }
-
     let res: AxiosResponse
     const url = `${seekerServerURL}/rest/api/latest/reports/compliances/export?projectKeys=${seekerProjectKey}`
     try {
@@ -56,7 +46,7 @@ async function run(): Promise<void> {
     }  
     writeFileSync('seeker-compliance-report.pdf', res.data)
 
-    // Upload the Seeker Compliance Report PDF as a build artefact
+    core.info('Uploading the Seeker Compliance Report PDF as a build artefact')
     const artifactClient = artifact.create()
     const artifactName = 'seeker-compliance-report'
     const files = [

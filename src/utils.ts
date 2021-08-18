@@ -33,9 +33,14 @@ export interface Vulnerability {
 
 export function getInputOrEnvironmentVariable(
   inputName: string,
-  envVar: string
+  envVar: string,
+  required = true
 ): string { 
-  return core.getInput(inputName) || process.env[envVar] || ""
+  const result = core.getInput(inputName) || process.env[envVar] || ""
+  if (required && !result) {
+    core.setFailed(`You must provide either the input parameter ${inputName} or environment variable ${envVar}`)
+  }
+  return result
 }
 
 export function getInputOrEnvironmentVariableBoolean(

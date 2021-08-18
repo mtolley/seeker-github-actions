@@ -22,21 +22,9 @@ inputs:
     description: 'Fail the build action if the Seeker Compliance Policy check fails.'
     default: false
 
+# It would be great to implement this by just calling the two actions: check-seeker-compliance
+# and seeker-compliance report. Sadly it is not possible to do this today, so we have to call
+# the JavaScript action seeker-compliance-reporting that does the same thing.
 runs:
-  using: 'composite'
-  steps:
-    #- name: Generate Seeker Compliance Report
-    - uses: mtolley/seeker-github-actions/seeker-compliance-report@v1.1
-      with:
-        seekerServerURL: ${{ inputs.seekerServerURL }}
-        seekerProjectKey: ${{ inputs.seekerProjectKey }}
-        seekerAPIToken: ${{ inputs.seekerAPIToken }}        
-        generateComplianceReportPDF: ${{ inputs.generateComplianceReportPDF }}
-
-    #- name: Seeker Compliance Check
-    - uses: mtolley/seeker-github-actions/check-seeker-compliance@v1.1
-      with:
-        seekerServerURL: ${{ inputs.seekerServerURL }}
-        seekerProjectKey: ${{ inputs.seekerProjectKey }}
-        seekerAPIToken: ${{ inputs.seekerAPIToken }}        
-        failBuildIfNotInCompliance: ${{ inputs.failBuildIfNotInCompliance }}
+  using: 'node12'
+  main: '../lib/seeker-compliance-report.js'
