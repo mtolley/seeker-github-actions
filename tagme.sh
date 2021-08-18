@@ -1,4 +1,5 @@
 #!/bin/bash
+npm run build
 git tag -d v1.1
 git push --delete origin v1.1
 git add .
