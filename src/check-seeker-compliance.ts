@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
-import {getInputOrEnvironmentVariable, getComplianceStatus} from './utils'
-
+import {getInputOrEnvironmentVariable, checkComplianceStatus} from './utils'
 
 async function run(): Promise<void> {
   try {
@@ -24,44 +23,12 @@ async function run(): Promise<void> {
     )
     const failBuildIfNotInCompliance = core.getBooleanInput('failBuildIfNotInCompliance')
     
-    const complianceStatus = await getComplianceStatus({
+    await checkComplianceStatus({
       seekerServerURL,
       seekerProjectKey,
-      seekerAPIToken
-    })
-
-    /*
-    const url = `${seekerServerURL}/rest/api/latest/projects/${seekerProjectKey}/status` 
-    let res: AxiosResponse<Status>
-    try {
-      res = await axios.get(url, {
-        headers: {
-          Authorization: seekerAPIToken
-        }
-      })
-    } catch(error) {
-      if (error.response) {
-        core.error(`Seeker Server responded with error code: ${error.response.status}`)
-        core.error(`Error message: ${error.response.data.message}`)
-      } else {
-        core.error("No response from Seeker Server")
-        core.error(error)
-      }
-      return
-    }  
-    */
-
-    if (failBuildIfNotInCompliance && complianceStatus === false) {
-      const message = `Seeker Project ${seekerProjectKey} is not in compliance. Please see Compliance Report for more details.`
-      if (failBuildIfNotInCompliance) {
-        core.setFailed(message)
-      } else {
-        core.warning(message)
-      }
-    } else {
-      core.info(`Seeker Project ${seekerProjectKey} is in compliance.`)
-    }
-     
+      seekerAPIToken,
+      failBuildIfNotInCompliance
+    })     
   } catch (error) {
     core.setFailed(error.message)
   }

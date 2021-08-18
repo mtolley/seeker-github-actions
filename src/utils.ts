@@ -72,13 +72,15 @@ interface Status {
 export interface getComplianceStatusParameters {
   seekerServerURL: string,
   seekerProjectKey: string,
-  seekerAPIToken: string
+  seekerAPIToken: string,
+  failBuildIfNotInCompliance: boolean
 }
 
-export async function getComplianceStatus({ 
+export async function checkComplianceStatus({ 
   seekerServerURL, 
   seekerProjectKey, 
   seekerAPIToken, 
+  failBuildIfNotInCompliance
 }: getComplianceStatusParameters): Promise<boolean> {
   const url = `${seekerServerURL}/rest/api/latest/projects/${seekerProjectKey}/status` 
   let res: AxiosResponse<Status>
@@ -98,6 +100,18 @@ export async function getComplianceStatus({
     }
     return false
   }  
+
+  if (failBuildIfNotInCompliance && res.data.projectStatus.compliant === false) {
+    const message = `Seeker Project ${seekerProjectKey} is not in compliance. Please see Compliance Report for more details.`
+    if (failBuildIfNotInCompliance) {
+      core.setFailed(message)
+    } else {
+      core.warning(message)
+    }
+  } else {
+    core.info(`Seeker Project ${seekerProjectKey} is in compliance.`)
+  }
+
   return res.data.projectStatus.compliant
 }
 
