@@ -1,0 +1,21 @@
+name: 'List Seeker Vulnerabilities'
+description: 'List Seeker vulnerabilities that match certain criteria.'
+author: 'Scott Tolley'
+inputs:
+  seekerServerURL: 
+    description: 'Seeker Server URL - will fall back to the environment variable SEEKER_SERVER_URL if not set.'
+  seekerProjectKey: 
+    description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
+  seekerAPIToken:
+    description: 'Seeker API Token - you should store your Seeker API Token securely as an ecrypted secret.'
+  statuses:
+    description: 'Comma-separated list of vulnerability status keys to be included - defaults to DETECTED'
+    default: DETECTED
+  onlySeekerVerified:
+    description: 'Boolean - only returns vulnerabilities tagged with Seeker-Verified.'
+  minSeverity:
+    description: 'The minimum severity of vulnerabilities to list: CRITICAL, HIGH, MEDIUM, LOW, INFORMATIVE'
+
+runs:
+  using: 'node12'
+  main: '../lib/list-seeker-vulnerabilities.js'
