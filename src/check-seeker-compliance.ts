@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import {getInputOrEnvironmentVariable} from './utils'
-import axios, { AxiosResponse } from 'axios'
+import {getInputOrEnvironmentVariable, getComplianceStatus} from './utils'
+
 
 async function run(): Promise<void> {
   try {
