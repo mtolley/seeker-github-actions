@@ -63,6 +63,44 @@ export function handleAxiosError(error: AxiosError): void {
   }
 }
 
+interface Status {
+  projectStatus: {
+    compliant: boolean
+  }
+}
+
+export interface getComplianceStatusParameters {
+  seekerServerURL: string,
+  seekerProjectKey: string,
+  seekerAPIToken: string
+}
+
+export async function getComplianceStatus({ 
+  seekerServerURL, 
+  seekerProjectKey, 
+  seekerAPIToken, 
+}: getComplianceStatusParameters): Promise<boolean> {
+  const url = `${seekerServerURL}/rest/api/latest/projects/${seekerProjectKey}/status` 
+  let res: AxiosResponse<Status>
+  try {
+    res = await axios.get(url, {
+      headers: {
+        Authorization: seekerAPIToken
+      }
+    })
+  } catch(error) {
+    if (error.response) {
+      core.error(`Seeker Server responded with error code: ${error.response.status}`)
+      core.error(`Error message: ${error.response.data.message}`)
+    } else {
+      core.error("No response from Seeker Server")
+      core.error(error)
+    }
+    return false
+  }  
+  return res.data.projectStatus.compliant
+}
+
 export interface generateSeekerComplianceReportPDFParameters {
   seekerServerURL: string,
   seekerProjectKey: string,
@@ -96,8 +134,6 @@ export async function generateSeekerComplianceReportPDF({
   }  
   writeFileSync('seeker-compliance-report.pdf', res.data)
 }
-
-
 
 export interface getSeekerVulnerabilitiesParameters {
   seekerServerURL: string,
