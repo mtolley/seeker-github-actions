@@ -25,16 +25,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Generate Seeker Compliance Report
-    uses: mtolley/seeker-github-actions/seeker-compliance-report@v1.1
+    #- name: Generate Seeker Compliance Report
+    - uses: mtolley/seeker-github-actions/seeker-compliance-report@v1.1
       with:
         seekerServerURL: ${{ inputs.seekerServerURL }}
         seekerProjectKey: ${{ inputs.seekerProjectKey }}
         seekerAPIToken: ${{ inputs.seekerAPIToken }}        
         generateComplianceReportPDF: ${{ inputs.generateComplianceReportPDF }}
 
-    - name: Seeker Compliance Check
-    uses: mtolley/seeker-github-actions/check-seeker-compliance@v1.1
+    #- name: Seeker Compliance Check
+    - uses: mtolley/seeker-github-actions/check-seeker-compliance@v1.1
       with:
         seekerServerURL: ${{ inputs.seekerServerURL }}
         seekerProjectKey: ${{ inputs.seekerProjectKey }}
