@@ -1,5 +1,5 @@
 name: 'Seeker Compliance Report'
-description: 'Download Seeker Compliance Report'
+description: 'Download Seeker Compliance report and upload it as a build artefact'
 author: 'Scott Tolley'
 inputs:
   seekerServerURL: 

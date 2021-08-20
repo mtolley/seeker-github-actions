@@ -1,12 +1,15 @@
-import * as core from '@actions/core'
-import { generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable } from './utils'
-// import axios, { AxiosResponse } from 'axios'
+// seeker-compliance-reporting
+// ///////////////////////////
+//
+// This action encapsulates the seeker-compliance-report and check-seeker-compliance
+// actions. It checks Seeker Policy compliance and depending on the input values
+// will do one or both of the following:
+//
+// * Generate the Compliance Report PDF and upload it as a build artefact.
+// * Fail the build if the specified project is not in compliance.
 
-// interface Status {
-//   projectStatus: {
-//     compliant: boolean
-//   }
-// }
+import * as core from '@actions/core'
+import { checkComplianceStatus, generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable } from './utils'
 
 async function run(): Promise<void> {
   try {
@@ -28,16 +31,23 @@ async function run(): Promise<void> {
       true // required
     )
 
-   // const generateComplianceReportPDF = core.getBooleanInput('generateComplianceReportPDF')
-   // const failBuildIfNotInCompliance = core.getBooleanInput('generateComplianceReportPDF')
+    const generateComplianceReportPDFInput = core.getBooleanInput('generateComplianceReportPDF')
+    const failBuildIfNotInCompliance = core.getBooleanInput('generateComplianceReportPDF')
 
-    await generateSeekerComplianceReportPDF({
+    if (generateComplianceReportPDFInput) {
+      await generateSeekerComplianceReportPDF({
+        seekerServerURL,
+        seekerProjectKey,
+        seekerAPIToken
+      })
+    }
+    
+    await checkComplianceStatus({
       seekerServerURL,
       seekerProjectKey,
-      seekerAPIToken
-    })
-    
-    
+      seekerAPIToken,
+      failBuildIfNotInCompliance
+    })   
   } catch (error) {
     core.setFailed(error.message)
   }

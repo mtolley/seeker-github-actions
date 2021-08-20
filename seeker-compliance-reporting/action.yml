@@ -17,7 +17,7 @@ inputs:
     description: 'Seeker API Token - will fall back to the environment variable SEEKER_API_TOKEN if not set.'
   generateComplianceReportPDF:
     description: 'The Seeker Compliance Report will be generated and added as a build artefact.'
-    default: false
+    default: true
   failBuildIfNotInCompliance:
     description: 'Fail the build action if the Seeker Compliance Policy check fails.'
     default: false

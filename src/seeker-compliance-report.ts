@@ -1,3 +1,9 @@
+// seeker-compliance-report
+// ////////////////////////
+//
+// Downloads the Seeker Compliance report for the specified project and uploads
+// it to the workflow results as a build artefact.
+
 import * as core from '@actions/core'
 import {generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable, uploadSeekerComplianceReport} from './utils'
 
@@ -21,7 +27,7 @@ async function run(): Promise<void> {
       'SEEKER_API_TOKEN',
       true // required
     )
-    
+
     // Generate and upload the Seeker Compliance report
     await generateSeekerComplianceReportPDF({
       seekerServerURL,
