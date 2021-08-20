@@ -32,9 +32,11 @@ async function run(): Promise<void> {
     )
 
     const generateComplianceReportPDFInput = core.getBooleanInput('generateComplianceReportPDF')
-    const failBuildIfNotInCompliance = core.getBooleanInput('generateComplianceReportPDF')
+    const failBuildIfNotInCompliance = core.getBooleanInput('failBuildIfNotInCompliance')
 
+    core.info('one')
     if (generateComplianceReportPDFInput) {
+      core.info('one')
       await generateSeekerComplianceReportPDF({
         seekerServerURL,
         seekerProjectKey,
