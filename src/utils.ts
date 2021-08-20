@@ -109,7 +109,7 @@ export async function checkComplianceStatus({
       core.warning(message)
     }
   } else {
-    core.info(`👏 Seeker Project ${seekerProjectKey} is in compliance.`)
+    core.info(`✔️ Seeker Project ${seekerProjectKey} is in compliance.`)
   }
 
   return res.data.projectStatus.compliant

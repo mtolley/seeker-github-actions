@@ -11,7 +11,7 @@ import {getInputOrEnvironmentVariable, checkComplianceStatus} from './utils'
 
 async function run(): Promise<void> {
   try {
-    core.info('Checking Seeker Compliance Policy status')
+    core.info('ℹ️ Checking Seeker Compliance Policy status')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(

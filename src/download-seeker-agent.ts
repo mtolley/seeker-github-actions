@@ -12,7 +12,7 @@ import child_process from 'child_process'
 
 async function run(): Promise<void> {
   try {
-    core.info('🔽 Downloading Seeker agent from Seeker Server')
+    core.info('⬇️ Downloading Seeker agent from Seeker Server')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
