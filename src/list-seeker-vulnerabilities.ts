@@ -1,36 +1,5 @@
 import * as core from '@actions/core'
 import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
-import axios, { AxiosResponse } from 'axios'
-
-interface Vulnerability {
-  Owner: string,
-  ProjectKey: string,
-  ItemKey: string,
-  CheckerKey: string,
-  VulnerabilityName: string,
-  Severity: string,
-  ticketUrls: string,
-  URL: string,
-  SourceName: string,
-  SourceType: string,
-  CodeLocation: string,
-  StackTrace: string,
-  VerificationTag: string,
-  DetectionCount: string,
-  FirstDetectionTime: string,
-  LastDetectionTime: string,
-  Status: string,
-  OWASP2013: string,
-  "PCI-DSS": string,
-  "CWE-SANS": string,
-  OWASP2017: string,
-  GDPR: string,
-  CAPEC: string,
-  LastDetectionURL: string,
-  SeekerServerLink: string,
-  CustomTags: string,
-  LatestVersion: string
-}
 
 async function run(): Promise<void> {
   try {
