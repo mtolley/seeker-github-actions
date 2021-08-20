@@ -1,3 +1,17 @@
+// list-seeker-vulnerabilities
+// ///////////////////////////
+// 
+// Lists vulnerabilities from the Seeker server apply these filters:
+//
+// * Project key
+// * (Optional) Project version
+// * (Optional) Only Seeker-Verified vulnerabilities
+// * (Optional) Statuses (defaults to DETECTED)
+// * (Optional) Minimum Severity
+//
+// The default use case for list-seeker-vulnerabilities is to output a list of
+// currently detected vulnerabilities for the specified project.
+
 import * as core from '@actions/core'
 import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
 
@@ -51,42 +65,9 @@ async function run(): Promise<void> {
       seekerProjectVersion
     })
 
-    // let url = `${seekerServerURL}/rest/api/latest/vulnerabilities?format=JSON&language=en&projectKeys=${seekerProjectKey}&includeHttpHeaders=false&includeHttpParams=false&includeDescription=false&includeRemediation=false&includeSummary=false&includeVerificationProof=false&includeTriageEvents=false&includeComments=false`
-    // if (onlySeekerVerified.toLowerCase() === 'true') {
-    //   url += '&onlySeekerVerified=true'
-    // }
-    // if (minSeverity) {
-    //   url += `&minSeverity=${minSeverity}`
-    // }
-    // if (statuses) {
-    //   url += `&statuses=${statuses}`
-    // }
-
-    // core.info(url)
-    // core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
-    // let res: AxiosResponse<Vulnerability[]>
-    // try {
-    //   res = await axios.get(url, {
-    //     headers: {
-    //       Authorization: seekerAPIToken
-    //     }
-    //   })
-    // } catch(error) {
-    //   if (error.response) {
-    //     core.error(`Seeker Server responded with error code: ${error.response.status}`)
-    //     core.error(`Error message: ${error.response.data.message}`)
-    //   } else {
-    //     core.error("No response from Seeker Server")
-    //     core.error(error)
-    //   }
-    //   return
-    // }  
-
-    // const vulns: Vulnerability[] = res.data
     for (const v of vulns) {
-      core.warning(`Seeker Vulnerability ${v.ItemKey} ${v.VulnerabilityName} ${v.URL}`)
+      core.warning(`Seeker Vulnerability ${v.ItemKey} ${v.VulnerabilityName} URL: ${v.URL} ${v.SeekerServerLink}`)
     }
-     
   } catch (error) {
     core.setFailed(error.message)
   }
