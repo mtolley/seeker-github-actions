@@ -27,4 +27,4 @@ inputs:
 # the JavaScript action seeker-compliance-reporting that does the same thing.
 runs:
   using: 'node12'
-  main: '../lib/seeker-compliance-report.js'
+  main: '../lib/seeker-compliance-reporting.js'
