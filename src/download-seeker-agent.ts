@@ -35,7 +35,7 @@ async function run(): Promise<void> {
       'SEEKER_OS_FAMILY',
       true // required
     )
-
+    core.warning(`/rest/api/latest/installers/agents/scripts/${technology}?projectKey=${seekerProjectKey}&downloadWith=curl&osFamily=${osFamily}&flavor=DEFAULT`)
     try {
       // First download the installer script from the Seeker server
       const url = `${seekerServerURL}/rest/api/latest/installers/agents/scripts/${technology}?projectKey=${seekerProjectKey}&downloadWith=curl&osFamily=${osFamily}&flavor=DEFAULT`
