@@ -153,6 +153,7 @@ export interface getSeekerVulnerabilitiesParameters {
   seekerServerURL: string,
   seekerProjectKey: string,
   seekerAPIToken: string,
+  seekerProjectVersion?: string
   onlySeekerVerified?: boolean,
   minSeverity?: string,
   statuses?: string
@@ -160,7 +161,8 @@ export interface getSeekerVulnerabilitiesParameters {
 
 export async function getSeekerVulnerabilities({ 
   seekerServerURL, 
-  seekerProjectKey, 
+  seekerProjectKey,
+  seekerProjectVersion,
   seekerAPIToken, 
   onlySeekerVerified, 
   minSeverity, 
@@ -179,8 +181,10 @@ export async function getSeekerVulnerabilities({
   if (statuses) {
     url += `&statuses=${statuses}`
   }
+  if (seekerProjectVersion) {
+    url += '&projectVersions=${seekerProjectVersion}'
+  }
 
-  core.info(url)
   core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
   let res: AxiosResponse<Vulnerability[]>
   try {

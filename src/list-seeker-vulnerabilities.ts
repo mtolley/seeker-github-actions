@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {getInputOrEnvironmentVariable} from './utils'
+import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
 import axios, { AxiosResponse } from 'axios'
 
 interface Vulnerability {
@@ -34,41 +34,34 @@ interface Vulnerability {
 
 async function run(): Promise<void> {
   try {
-    core.info('Downloading Seeker agent from Seeker Server')
+    core.info('Downloading Vulnerabilities from the Seeker server...')
     
+    // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
       'seekerServerUrl',
-      'SEEKER_SERVER_URL'
+      'SEEKER_SERVER_URL',
+      true // required 
     )
     const seekerProjectKey = getInputOrEnvironmentVariable(
       'seekerProjectKey',
-      'SEEKER_PROJECT_KEY'
+      'SEEKER_PROJECT_KEY',
+      true // required
     )
     const seekerAPIToken = getInputOrEnvironmentVariable(
       'seekerAPIToken',
-      'SEEKER_API_TOKEN'
+      'SEEKER_API_TOKEN',
+      true // required
     )
-    const onlySeekerVerified = core.getInput('onlySeekerVerified') || ""
+    const seekerProjectVersion = getInputOrEnvironmentVariable(
+      'seekerProjectVersion',
+      'SEEKER_PROJECT_VERSION',
+      false // optional, as versioning might not be available for this project
+    )
+
+    const onlySeekerVerified = core.getBooleanInput('onlySeekerVerified')
     const statuses = core.getInput('statuses') || "DETECTED"
     const minSeverity = core.getInput('minSeverity') || ""
-
-    core.info(`Seeker Server URL: ${seekerServerURL}`)
-    core.info(`Seeker Project Key: ${seekerProjectKey}`)
     
-    if (!seekerServerURL) { 
-      core.error("The Seeker Server URL must be provided with the seekerServerURL input or via the SEEKER_SERVER_URL environment variable.")
-    }
-    if (!seekerProjectKey) {
-      core.error("The Seeker Project Key must be provided with the seekerProjectKey input or via the SEEKER_PROJECT_KEY environment variable.")
-    }
-    if (!seekerAPIToken) {
-      core.error("The Seeker API Token must be provided with the seekerAPIToken input. You should store your Seeker API Token securely as an ecrypted secret.")
-    }
-    if (onlySeekerVerified) {
-      if (onlySeekerVerified.toUpperCase() !== 'TRUE' && onlySeekerVerified.toUpperCase() !== 'FALSE') {
-        core.error(`Invalid value for onlySeekerVerified provided: ${onlySeekerVerified}. Permitted values are "true" or "false"`)
-      }
-    }
     if (minSeverity) {
       if (minSeverity !== 'CRITICAL' && 
           minSeverity !== 'HIGH' && 
@@ -79,38 +72,48 @@ async function run(): Promise<void> {
           }
     }
 
-    let url = `${seekerServerURL}/rest/api/latest/vulnerabilities?format=JSON&language=en&projectKeys=${seekerProjectKey}&includeHttpHeaders=false&includeHttpParams=false&includeDescription=false&includeRemediation=false&includeSummary=false&includeVerificationProof=false&includeTriageEvents=false&includeComments=false`
-    if (onlySeekerVerified.toLowerCase() === 'true') {
-      url += '&onlySeekerVerified=true'
-    }
-    if (minSeverity) {
-      url += `&minSeverity=${minSeverity}`
-    }
-    if (statuses) {
-      url += `&statuses=${statuses}`
-    }
+    const vulns = await getSeekerVulnerabilities({
+      seekerServerURL,
+      seekerProjectKey,
+      seekerAPIToken,
+      statuses,
+      onlySeekerVerified,
+      minSeverity,
+      seekerProjectVersion
+    })
 
-    core.info(url)
-    core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
-    let res: AxiosResponse<Vulnerability[]>
-    try {
-      res = await axios.get(url, {
-        headers: {
-          Authorization: seekerAPIToken
-        }
-      })
-    } catch(error) {
-      if (error.response) {
-        core.error(`Seeker Server responded with error code: ${error.response.status}`)
-        core.error(`Error message: ${error.response.data.message}`)
-      } else {
-        core.error("No response from Seeker Server")
-        core.error(error)
-      }
-      return
-    }  
+    // let url = `${seekerServerURL}/rest/api/latest/vulnerabilities?format=JSON&language=en&projectKeys=${seekerProjectKey}&includeHttpHeaders=false&includeHttpParams=false&includeDescription=false&includeRemediation=false&includeSummary=false&includeVerificationProof=false&includeTriageEvents=false&includeComments=false`
+    // if (onlySeekerVerified.toLowerCase() === 'true') {
+    //   url += '&onlySeekerVerified=true'
+    // }
+    // if (minSeverity) {
+    //   url += `&minSeverity=${minSeverity}`
+    // }
+    // if (statuses) {
+    //   url += `&statuses=${statuses}`
+    // }
 
-    const vulns: Vulnerability[] = res.data
+    // core.info(url)
+    // core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
+    // let res: AxiosResponse<Vulnerability[]>
+    // try {
+    //   res = await axios.get(url, {
+    //     headers: {
+    //       Authorization: seekerAPIToken
+    //     }
+    //   })
+    // } catch(error) {
+    //   if (error.response) {
+    //     core.error(`Seeker Server responded with error code: ${error.response.status}`)
+    //     core.error(`Error message: ${error.response.data.message}`)
+    //   } else {
+    //     core.error("No response from Seeker Server")
+    //     core.error(error)
+    //   }
+    //   return
+    // }  
+
+    // const vulns: Vulnerability[] = res.data
     for (const v of vulns) {
       core.warning(`Seeker Vulnerability ${v.ItemKey} ${v.VulnerabilityName} ${v.URL}`)
     }
