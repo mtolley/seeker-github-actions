@@ -9,7 +9,7 @@
 // * Fail the build if the specified project is not in compliance.
 
 import * as core from '@actions/core'
-import { checkComplianceStatus, generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable } from './utils'
+import { checkComplianceStatus, generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable, uploadSeekerComplianceReport } from './utils'
 
 async function run(): Promise<void> {
   try {
@@ -30,17 +30,16 @@ async function run(): Promise<void> {
       'SEEKER_API_TOKEN',
       true // required
     )
-
     const generateComplianceReportPDFInput = core.getBooleanInput('generateComplianceReportPDF')
     const failBuildIfNotInCompliance = core.getBooleanInput('failBuildIfNotInCompliance')
-    core.info("???")
+
     if (generateComplianceReportPDFInput) {
-      core.info("!!!")
       await generateSeekerComplianceReportPDF({
         seekerServerURL,
         seekerProjectKey,
         seekerAPIToken
       })
+      await uploadSeekerComplianceReport()
     }
 
     await checkComplianceStatus({

@@ -83,7 +83,6 @@ export async function checkComplianceStatus({
   failBuildIfNotInCompliance
 }: getComplianceStatusParameters): Promise<boolean> {
   const url = `${seekerServerURL}/rest/api/latest/projects/${seekerProjectKey}/status` 
-  core.info(url)
   let res: AxiosResponse<Status>
   try {
     res = await axios.get(url, {
@@ -129,7 +128,6 @@ export async function generateSeekerComplianceReportPDF({
 }: generateSeekerComplianceReportPDFParameters): Promise<void> {
   let res: AxiosResponse
   const url = `${seekerServerURL}/rest/api/latest/reports/compliances/export?projectKeys=${seekerProjectKey}`
-  core.info(url)
   try {
     res = await axios.get(url, {
       responseType: 'arraybuffer',
