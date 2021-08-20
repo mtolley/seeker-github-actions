@@ -16,3 +16,6 @@ inputs:
 runs:
   using: 'node12'
   main: '../lib/download-seeker-agent.js'
+branding:
+  icon: 'download'  
+  color: 'purple'
