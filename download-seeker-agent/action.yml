@@ -11,6 +11,8 @@ inputs:
   technology:
     description: 'Agent technology - one of JAVA, DOTNETCORE, DOTNET, NODEJS, PHP, GO, PYTHON'
     required: true
+  osFamily:
+    description: 'OS Family - one of LINUX, WINDOWS, MAC'
 runs:
   using: 'node12'
   main: '../lib/download-seeker-agent.js'

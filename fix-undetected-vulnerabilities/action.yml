@@ -1,5 +1,5 @@
 name: 'Fix Undetected Vulnerabilities'
-description: 'Set the status of any vulnerabilities not detected in the latest version to FIXED.'
+description: 'Set the status of any vulnerabilities not detected at all in the latest version to FIXED.'
 author: 'Scott Tolley'
 inputs:
   seekerServerURL: 

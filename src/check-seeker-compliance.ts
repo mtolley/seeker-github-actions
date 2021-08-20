@@ -1,3 +1,11 @@
+// check-seeker-compliance.ts
+// //////////////////////////
+//
+// Calls the Seeker API for the specified project to determine whether that
+// project is currently in compliance with any assigned Compliance Policies
+// or not. The Compliance status is written to the action output. Optionally,
+// if failBuildIfNotInCompliance is true, the action will fail.
+
 import * as core from '@actions/core'
 import {getInputOrEnvironmentVariable, checkComplianceStatus} from './utils'
 

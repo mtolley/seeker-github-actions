@@ -1,46 +1,47 @@
+// fix-undetected-vulnerabilities
+// //////////////////////////////
+//
+// Search for any vulnerabilities in the project that currently have a status of 
+// DETECTED but which were not detected during testing of the specified version of
+// the project. If any such vulnerabilties are found, set the Status to FIXED.
+//
+// Version detection must be enable for the project or project template in Seeker
+// and the current version must be specified as an input to this action (or via
+// the environment variable SEEKER_PROJECT_VERSION).
+
 import * as core from '@actions/core'
 import axios from 'axios'
 import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
-//import axios, { AxiosError, AxiosResponse } from 'axios'
 import * as querystring from 'querystring'
 
 async function run(): Promise<void> {
   try {
     core.info('Exporting newly-detected vulnerabilities that match certain criteria')
     
+    // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
       'seekerServerUrl',
-      'SEEKER_SERVER_URL'
+      'SEEKER_SERVER_URL',
+      true // required 
     )
     const seekerProjectKey = getInputOrEnvironmentVariable(
       'seekerProjectKey',
-      'SEEKER_PROJECT_KEY'
+      'SEEKER_PROJECT_KEY',
+      true // required
     )
     const seekerAPIToken = getInputOrEnvironmentVariable(
       'seekerAPIToken',
-      'SEEKER_API_TOKEN'
+      'SEEKER_API_TOKEN',
+      true // required
     )
     const seekerProjectVersion = getInputOrEnvironmentVariable(
       'seekerProjectVersion',
-      'SEEKER_PROJECT_VERSION'
+      'SEEKER_PROJECT_VERSION',
+      true // required
     )
 
-    core.info(`Seeker Server URL: ${seekerServerURL}`)
-    core.info(`Seeker Project Key: ${seekerProjectKey}`)
-    
-    if (!seekerServerURL) { 
-      core.setFailed("The Seeker Server URL must be provided with the seekerServerURL input or via the SEEKER_SERVER_URL environment variable.")
-    }
-    if (!seekerProjectKey) {
-      core.setFailed("The Seeker Project Key must be provided with the seekerProjectKey input or via the SEEKER_PROJECT_KEY environment variable.")
-    }
-    if (!seekerAPIToken) {
-      core.setFailed("The Seeker API Token must be provided with the seekerAPIToken input. You should store your Seeker API Token securely as an ecrypted secret.")
-    }
-    if (!seekerProjectVersion) {
-      core.setFailed("The Seeker Project Version must be specified with the seekerProjectVersion input or via the SEEKER_PROJECT_VERSION environment varaible.")
-    }
-
+    // Download all the vulnerabilities for the project that are currently still in the 
+    // DETECTED state in the Seeker server.
     let vulns = await getSeekerVulnerabilities({
       seekerServerURL,
       seekerProjectKey,
@@ -48,16 +49,16 @@ async function run(): Promise<void> {
       statuses: "DETECTED"
     })
 
-    // Identify the vulnerabilities that were not detected during the most recent test run
+    // Identify only the vulnerabilities that were NOT detected during the most recent test run
     vulns = vulns.filter(v => v.LatestVersion !== seekerProjectVersion)
 
     if (vulns.length > 0) {
-      core.info('Vulnerabilities identified that have not been detected in the current version')
+      core.info('Vulnerabilities identified that have not been detected in the current version.')
+      core.info('The status for these vulnerabilities will be set to FIXED automatically.')
       for (const v of vulns) {
         core.info(v.ItemKey)
       }
     
-      // And set their status to FIXED automatically.
       const bulkUpdate = {
         vulnerabilityKeys: vulns.map(v => v.ItemKey).join(','),
         status: 'FIXED',
