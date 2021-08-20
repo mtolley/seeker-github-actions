@@ -25,16 +25,9 @@ async function run(): Promise<void> {
       'SEEKER_PROJECT_KEY',
       true // required
     )
-    const technology = getInputOrEnvironmentVariable(
-      'seekerAPIToken',
-      'SEEKER_API_TOKEN',
-      true // required
-    )
-    const osFamily = getInputOrEnvironmentVariable(
-      'osFamily',
-      'SEEKER_OS_FAMILY',
-      true // required
-    )
+    const technology = core.getInput('technology', { required: true })
+    const osFamily = core.getInput('osFamily', { required: true })
+    
     core.warning(`/rest/api/latest/installers/agents/scripts/${technology}?projectKey=${seekerProjectKey}&downloadWith=curl&osFamily=${osFamily}&flavor=DEFAULT`)
     try {
       // First download the installer script from the Seeker server
