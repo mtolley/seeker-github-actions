@@ -9,7 +9,7 @@ import {generateSeekerComplianceReportPDF, getInputOrEnvironmentVariable, upload
 
 async function run(): Promise<void> {
   try {
-    core.info('Downloading Seeker compliance report from the Seeker Server')
+    core.info('🔽 Downloading Seeker compliance report from the Seeker Server')
 
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(

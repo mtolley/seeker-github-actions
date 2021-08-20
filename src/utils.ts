@@ -102,14 +102,14 @@ export async function checkComplianceStatus({
   }  
 
   if (failBuildIfNotInCompliance && res.data.projectStatus.compliant === false) {
-    const message = `Seeker Project ${seekerProjectKey} is not in compliance. Please see Compliance Report for more details.`
+    const message = `❌ Seeker Project ${seekerProjectKey} is not in compliance. Please see Compliance Report for more details.`
     if (failBuildIfNotInCompliance) {
       core.setFailed(message)
     } else {
       core.warning(message)
     }
   } else {
-    core.info(`Seeker Project ${seekerProjectKey} is in compliance.`)
+    core.info(`👏 Seeker Project ${seekerProjectKey} is in compliance.`)
   }
 
   return res.data.projectStatus.compliant
@@ -185,7 +185,6 @@ export async function getSeekerVulnerabilities({
     url += `&projectVersions=${seekerProjectVersion}`
   }
 
-  core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
   let res: AxiosResponse<Vulnerability[]>
   try {
     res = await axios.get(url, {
@@ -201,7 +200,7 @@ export async function getSeekerVulnerabilities({
 }
 
 export async function uploadSeekerComplianceReport(): Promise<void> {
-  core.info('Uploading the Seeker Compliance Report PDF as a build artefact')
+  core.info('⬆️ Uploading the Seeker Compliance Report PDF as a build artefact')
   const artifactClient = artifact.create()
   const artifactName = 'seeker-compliance-report'
   const files = [

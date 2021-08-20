@@ -12,7 +12,7 @@ import child_process from 'child_process'
 
 async function run(): Promise<void> {
   try {
-    core.info('Downloading Seeker agent from Seeker Server')
+    core.info('🔽 Downloading Seeker agent from Seeker Server')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
@@ -31,7 +31,6 @@ async function run(): Promise<void> {
     try {
       // First download the installer script from the Seeker server
       const url = `${seekerServerURL}/rest/api/latest/installers/agents/scripts/${technology}?projectKey=${seekerProjectKey}&downloadWith=curl&osFamily=${osFamily}&flavor=DEFAULT`
-      core.info(`Downloading Seeker agent from URL: ${url}`)
       const res = await axios.get(url)
 
       // Then execute the installer script and echo any output. 

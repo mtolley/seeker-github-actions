@@ -13,7 +13,7 @@ import { checkComplianceStatus, generateSeekerComplianceReportPDF, getInputOrEnv
 
 async function run(): Promise<void> {
   try {
-    core.info('Downloading Seeker compliance report from the Seeker Server')
+    core.info('🔽 Downloading Seeker compliance report from the Seeker Server')
 
     const seekerServerURL = getInputOrEnvironmentVariable(
       'seekerServerUrl',
@@ -41,7 +41,7 @@ async function run(): Promise<void> {
         seekerAPIToken
       })
     }
-    
+
     await checkComplianceStatus({
       seekerServerURL,
       seekerProjectKey,

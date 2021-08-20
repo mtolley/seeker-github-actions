@@ -17,7 +17,7 @@ import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
 
 async function run(): Promise<void> {
   try {
-    core.info('Downloading Vulnerabilities from the Seeker server...')
+    core.info('🔽 Downloading Vulnerabilities from the Seeker server...')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
@@ -66,7 +66,7 @@ async function run(): Promise<void> {
     })
 
     for (const v of vulns) {
-      core.warning(`Seeker Vulnerability ${v.ItemKey} ${v.VulnerabilityName} URL: ${v.URL} ${v.SeekerServerLink}`)
+      core.warning(`🚩 Seeker Vulnerability ${v.ItemKey} ${v.VulnerabilityName} URL: ${v.URL} ${v.SeekerServerLink}`)
     }
   } catch (error) {
     core.setFailed(error.message)

@@ -16,7 +16,7 @@ import * as querystring from 'querystring'
 
 async function run(): Promise<void> {
   try {
-    core.info('Exporting newly-detected vulnerabilities that match certain criteria')
+    core.info('ℹ️ Exporting newly-detected vulnerabilities that match certain criteria')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
@@ -53,8 +53,7 @@ async function run(): Promise<void> {
     vulns = vulns.filter(v => v.LatestVersion !== seekerProjectVersion)
 
     if (vulns.length > 0) {
-      core.info('Vulnerabilities identified that have not been detected in the current version.')
-      core.info('The status for these vulnerabilities will be set to FIXED automatically.')
+      core.info('👏 Vulnerabilities identified that have not been detected in the current version. The status for these vulnerabilities will be set to FIXED automatically.')
       for (const v of vulns) {
         core.info(v.ItemKey)
       }
