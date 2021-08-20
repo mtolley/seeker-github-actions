@@ -182,7 +182,7 @@ export async function getSeekerVulnerabilities({
     url += `&statuses=${statuses}`
   }
   if (seekerProjectVersion) {
-    url += '&projectVersions=${seekerProjectVersion}'
+    url += `&projectVersions=${seekerProjectVersion}`
   }
 
   core.info(`Downloading Seeker vulnerabilities matching specified criteria from: ${url}`) 
