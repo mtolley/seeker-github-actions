@@ -13,7 +13,9 @@ inputs:
   closeFixedIssues:
     description: 'Close linked issues in GitHub automatically.'
     default: false
-
+  gitHubToken:
+    description: 'GitHub API token with sufficient privileges to close issues and create issue comments.'
+    
 runs:
   using: 'node12'
   main: '../lib/fix-undetected-vulnerabilities.js'
