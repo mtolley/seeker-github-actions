@@ -95,14 +95,14 @@ async function run(): Promise<void> {
 
       if (closeFixedIssues) {
         // It's easier to use the GitHub API directly to close the issue
-        //const octokit = github.getOctokit(gitHubToken)
-        const octokit = github.getOctokit(gitHubToken)
+        const octokit = github.getOctokit(gitHubToken) 
+        //const context = github.context;
         const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
         const [owner, repo] = ownerSlashRepo.split('/')
 
-        const workflow = process.env['GITHUB_WORKFLOW'] as string
-        const runNumber = process.env['GITHUB_RUN_NUMBER'] as string
-        const commit = process.env['GITHUB_SHA'] as string
+        // const workflow = process.env['GITHUB_WORKFLOW'] as string
+        // const runNumber = process.env['GITHUB_RUN_NUMBER'] as string
+        // const commit = process.env['GITHUB_SHA'] as string
         
         for (const v of vulns) {
           if (v.ticketUrls) {
@@ -116,27 +116,36 @@ async function run(): Promise<void> {
             // })
 
             core.info('one')
-            let response = await octokit.request(`PATCH ${v.ticketUrls}`, {
-              owner: 'octocat',
-              repo: 'hello-world',
-              issue_number: 42,
-              state: 'closed'
+            const response = await octokit.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: parseInt(issue_number),
+              body: 'Hello universe!'
             })
             core.info(response.toString())
             core.info('two')
+              
+            // let response = await octokit.request(`PATCH ${v.ticketUrls}`, {
+            //   owner: 'octocat',
+            //   repo: 'hello-world',
+            //   issue_number: 42,
+            //   state: 'closed'
+            // })
+            // core.info(response.toString())
+            // core.info('two')
 
-            if (response.status !== 200) {
-              core.error(`PATCH response: ${response.status}`)
-              core.error(response.toString())
-            }
+            // if (response.status !== 200) {
+            //   core.error(`PATCH response: ${response.status}`)
+            //   core.error(response.toString())
+            // }
 
-            response = await octokit.request(`POST ${v.ticketUrls}/comments`, {
-              owner,
-              repo,
-              issue_number,
-              body: `Issue automatically closed fix-undetected-vulnerabilities in workflow: ${workflow} run number: ${runNumber} for commit: ${commit} because this vulnerabilty was not detected during the latest test run.`
-            })
-            core.info(response.toString())
+            // response = await octokit.request(`POST ${v.ticketUrls}/comments`, {
+            //   owner,
+            //   repo,
+            //   issue_number,
+            //   body: `Issue automatically closed fix-undetected-vulnerabilities in workflow: ${workflow} run number: ${runNumber} for commit: ${commit} because this vulnerabilty was not detected during the latest test run.`
+            // })
+            // core.info(response.toString())
           }
         }
       }
