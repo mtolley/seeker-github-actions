@@ -17,7 +17,7 @@ import * as querystring from 'querystring'
 
 async function run(): Promise<void> {
   try {
-    core.info('ℹ️ ?Checking for vulnerabilties that may have been fixed in this commit.')
+    core.info('ℹ️ Checking for vulnerabilties that may have been fixed in this commit.')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
@@ -46,27 +46,6 @@ async function run(): Promise<void> {
       'GITHUB_TOKEN',
       false // only required if closeFixedIssues is set to true
     )
-
-    ////
-    ////
-
-      // const octokit = github.getOctokit(gitHubToken) 
-      // const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
-      // const [owner, repo] = ownerSlashRepo.split('/')
-      // //    'https://github.com/mtolley/hippotech-front-seeker-actions/issues/9'
-      // core.info('one')
-      // const response = await octokit.rest.issues.createComment({
-      //   owner,
-      //   repo,
-      //   issue_number: parseInt("9"),
-      //   body: 'Hello universe!'
-      // })
-      // core.info(response.toString())
-      // core.info('two')
-    
-
-    ////
-    ////
 
     // Download all the vulnerabilities for the project that are currently still in the 
     // DETECTED state in the Seeker server.
@@ -115,8 +94,6 @@ async function run(): Promise<void> {
       }
 
       if (closeFixedIssues) {
-        core.info('xxx')
-        // // It's easier to use the GitHub API directly to close the issue
         const octokit = github.getOctokit(gitHubToken) 
         const context = github.context
         const commit = process.env['GITHUB_SHA'] as string
@@ -125,21 +102,19 @@ async function run(): Promise<void> {
           if (v.ticketUrls) {
             const issue_number = parseInt(v.ticketUrls.substr(v.ticketUrls.lastIndexOf('/')+1))
             
-            const createCommentResponse = await octokit.rest.issues.createComment({
-              ...context.repo,
-              issue_number,
-              body: `Issue automatically closed fix-undetected-vulnerabilities in workflow: ${context.workflow} run number: ${context.runNumber} for commit: ${commit} because this vulnerabilty was not detected during the latest test run.`
-            })
-
-            core.info(createCommentResponse.status.toString())
-
-            const updateIssueResponse = await octokit.rest.issues.update({
+            // Close the issue in GitHub
+            await octokit.rest.issues.update({
               ...context.repo,
               issue_number,
               state: 'closed'
             })
-
-            core.info(updateIssueResponse.status.toString())
+            core.info(`:octocat: Closed issue #${issue_number.toString()} in GitHub`)
+            
+            await octokit.rest.issues.createComment({
+              ...context.repo,
+              issue_number,
+              body: `Issue automatically closed by \`fix-undetected-vulnerabilities\` in workflow **${context.workflow}** (run number **${context.runNumber}**) for commit: ${commit}, because this vulnerabilty was not detected during the latest test run.`
+            })
           }
         }
       }
