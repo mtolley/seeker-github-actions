@@ -17,7 +17,7 @@ import * as querystring from 'querystring'
 
 async function run(): Promise<void> {
   try {
-    core.info('ℹ️ Checking for vulnerabilties that may have been fixed in this commit.')
+    core.info('ℹ️ Testing')
     
     // Get the action inputs (or environment variables)
     const seekerServerURL = getInputOrEnvironmentVariable(
