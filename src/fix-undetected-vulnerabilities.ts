@@ -10,7 +10,7 @@
 // the environment variable SEEKER_PROJECT_VERSION).
 
 import * as core from '@actions/core'
-import * as github from '@actions/github';
+import * as github from '@actions/github'
 import axios from 'axios'
 import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
 import * as querystring from 'querystring'
@@ -46,6 +46,29 @@ async function run(): Promise<void> {
       'GITHUB_TOKEN',
       false // only required if closeFixedIssues is set to true
     )
+
+    ////
+    ////
+
+    const x = 'x'
+    if (x === 'x') {
+      const octokit = github.getOctokit(gitHubToken) 
+      const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
+      const [owner, repo] = ownerSlashRepo.split('/')
+      //    'https://github.com/mtolley/hippotech-front-seeker-actions/issues/9'
+      core.info('one')
+      const response = await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: parseInt("9"),
+        body: 'Hello universe!'
+      })
+      core.info(response.toString())
+      core.info('two')
+    }
+
+    ////
+    ////
 
     // Download all the vulnerabilities for the project that are currently still in the 
     // DETECTED state in the Seeker server.
