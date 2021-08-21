@@ -10,6 +10,8 @@ inputs:
     description: 'Seeker API Token - you should store your Seeker API Token securely as an ecrypted secret.'
   seekerProjectVersion:
     description: 'Seeker Project Version - will fall back to the environment SEEKER_PROJECT_VERSION is not set.'
+  closeFixedIssues:
+    description: 'Close linked issues in GitHub automatically.'
 
 runs:
   using: 'node12'

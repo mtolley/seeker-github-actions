@@ -10,6 +10,7 @@
 // the environment variable SEEKER_PROJECT_VERSION).
 
 import * as core from '@actions/core'
+import * as github from '@actions/github'
 import axios from 'axios'
 import {getInputOrEnvironmentVariable, getSeekerVulnerabilities} from './utils'
 import * as querystring from 'querystring'
@@ -38,6 +39,12 @@ async function run(): Promise<void> {
       'seekerProjectVersion',
       'SEEKER_PROJECT_VERSION',
       true // required
+    )
+    const closeFixedIssues = core.getBooleanInput('closeFixedIssues')
+    const gitHubToken = getInputOrEnvironmentVariable(
+      'gitHubToken',
+      'GITHUB_TOKEN',
+      false // only required if closeFixedIssues is set to true
     )
 
     // Download all the vulnerabilities for the project that are currently still in the 
@@ -84,7 +91,56 @@ async function run(): Promise<void> {
           core.error(error)
         }
         return
-      }  
+      }
+
+      if (closeFixedIssues) {
+        // It's easier to use the GitHub API directly to close the issue
+        const octokit = github.getOctokit(gitHubToken)
+      
+        const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
+        const [owner, repo] = ownerSlashRepo.split('/')
+
+        const workflow = process.env['GITHUB_WORKFLOW'] as string
+        const runNumber = process.env['GITHUB_RUN_NUMBER'] as string
+        const commit = process.env['GITHUB_SHA'] as string
+        
+        for (const v of vulns) {
+          if (v.ticketUrls) {
+            const issue_number = v.ticketUrls.substr(v.ticketUrls.lastIndexOf('/')+1)
+            
+            let response = await octokit.request(`PATCH ${v.ticketUrls}`, {
+              owner: 'octocat',
+              repo: 'hello-world',
+              issue_number: 42,
+              state: 'closed'
+            })
+
+            if (response.status !== 200) {
+              core.error(`PATCH response: ${response.status}`)
+              core.error(response.toString())
+            }
+
+            response = await octokit.request(`POST ${v.ticketUrls}/comments`, {
+              owner,
+              repo,
+              issue_number,
+              body: `Issue automatically closed fix-undetected-vulnerabilities in workflow: ${workflow} run number: ${runNumber} for commit: ${commit} because this vulnerabilty was not detected during the latest test run.`
+            })
+            core.info(response.toString())
+
+            // Then add a comment
+            // await axios({
+            //   method: 'post',
+            //   url: v.ticketUrls,
+            //   data: querystring.stringify({ state : "closed" }),
+            //   headers: {
+            //     Authorization: seekerAPIToken,
+            //     'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+            //   }           
+            // }) 
+          }
+        }
+      }
     } else {
       core.info('No DETECTED vulnerabilities were identified as FIXED (non detected) for this version.')
     }
