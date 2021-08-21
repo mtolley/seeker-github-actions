@@ -12,6 +12,7 @@ inputs:
     description: 'Seeker Project Version - will fall back to the environment SEEKER_PROJECT_VERSION is not set.'
   closeFixedIssues:
     description: 'Close linked issues in GitHub automatically.'
+    default: false
 
 runs:
   using: 'node12'
