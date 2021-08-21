@@ -50,8 +50,6 @@ async function run(): Promise<void> {
     ////
     ////
 
-    const x = 'x'
-    if (x === 'x') {
       const octokit = github.getOctokit(gitHubToken) 
       const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
       const [owner, repo] = ownerSlashRepo.split('/')
@@ -65,7 +63,7 @@ async function run(): Promise<void> {
       })
       core.info(response.toString())
       core.info('two')
-    }
+    
 
     ////
     ////
@@ -117,19 +115,20 @@ async function run(): Promise<void> {
       }
 
       if (closeFixedIssues) {
-        // It's easier to use the GitHub API directly to close the issue
-        const octokit = github.getOctokit(gitHubToken) 
-        //const context = github.context;
-        const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
-        const [owner, repo] = ownerSlashRepo.split('/')
+        core.info('xxx')
+        // // It's easier to use the GitHub API directly to close the issue
+        // const octokit = github.getOctokit(gitHubToken) 
+        // //const context = github.context;
+        // const ownerSlashRepo = process.env.GITHUB_REPOSITORY as string 
+        // const [owner, repo] = ownerSlashRepo.split('/')
 
         // const workflow = process.env['GITHUB_WORKFLOW'] as string
         // const runNumber = process.env['GITHUB_RUN_NUMBER'] as string
-        // const commit = process.env['GITHUB_SHA'] as string
+        // // const commit = process.env['GITHUB_SHA'] as string
         
-        for (const v of vulns) {
-          if (v.ticketUrls) {
-            const issue_number = v.ticketUrls.substr(v.ticketUrls.lastIndexOf('/')+1)
+        // for (const v of vulns) {
+        //   if (v.ticketUrls) {
+        //     const issue_number = v.ticketUrls.substr(v.ticketUrls.lastIndexOf('/')+1)
             
             // octokit.issues.createComment({
             //   owner: repository.owner.login,
@@ -138,15 +137,15 @@ async function run(): Promise<void> {
             //   body: '![' + octocat + '](' + octodex_url + '/' + octocat + ')'
             // })
 
-            core.info('one')
-            const response = await octokit.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: parseInt(issue_number),
-              body: 'Hello universe!'
-            })
-            core.info(response.toString())
-            core.info('two')
+            // core.info('one')
+            // const response = await octokit.rest.issues.createComment({
+            //   owner,
+            //   repo,
+            //   issue_number: parseInt(issue_number),
+            //   body: 'Hello universe!'
+            // })
+            // core.info(response.toString())
+            // core.info('two')
               
             // let response = await octokit.request(`PATCH ${v.ticketUrls}`, {
             //   owner: 'octocat',
@@ -169,8 +168,8 @@ async function run(): Promise<void> {
             //   body: `Issue automatically closed fix-undetected-vulnerabilities in workflow: ${workflow} run number: ${runNumber} for commit: ${commit} because this vulnerabilty was not detected during the latest test run.`
             // })
             // core.info(response.toString())
-          }
-        }
+          //}
+        //}
       }
     } else {
       core.info('ℹ️ No DETECTED vulnerabilities were identified as FIXED (non detected) for this version.')
