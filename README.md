@@ -94,6 +94,16 @@ Once testing is complete you can use the remaining Seeker actions to do somethin
     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### Examples
+
+The example workflows outlined about will give you feedback in the build output and summary. e.g.
+
+![Example GitHub Build Output](/doc/img/github-build-output.png?raw=true "Example GitHub Build Output")
+
+and
+
+![Example GitHub Build Summary](/relative/path/to/img.jpg?raw=true "Example GitHub Build Summary")
+
 ### Exporting Seeker Findings as GitHub Issues
 
 Whether you want to export issues from Seeker to GitHub manually in the Seeker UI, or automatically as a result of any new findings detected during your GitHub actions workflows, you will need to enable external bug tracking integration on your Seeker server. See *Integrate External Bug Tracking Systems* in the Seeker online help, and [Seeker SDLC Integration](https://community.synopsys.com/s/article/Seeker-SDLC-Integration) on the Synopsys Community website for more details. Here's an example of a simple script that will enable this integration for GitHub issues on your Seeker server: just remember that you will need to add a little logic in this script to map the Seeker project key (SEEKER_PROJECT_KEY) that is specified for any new issues to your GitHub repo.
