@@ -102,7 +102,7 @@ The example workflows outlined about will give you feedback in the build output 
 
 and
 
-![Example GitHub Build Summary](/relative/path/to/img.jpg?raw=true "Example GitHub Build Summary")
+![Example GitHub Build Summary](/doc/img/github-build-summary.png?raw=true "Example GitHub Build Summary")
 
 ### Exporting Seeker Findings as GitHub Issues
 
