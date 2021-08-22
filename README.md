@@ -2,9 +2,9 @@
 
 Add Seeker IAST from Synopsys to your GitHub actions worklows. :rocket:
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+Use these actions to pull down the agent binaries from the Seeker server when and where you need them, add reports to your build output or artefacts, check Compliance Policy status, and close open issues in GitHub automatically when they get fixed in the code!
 
-If you want to know more about the basic concepts behind Seeker SDLC integrations you can read about the underlying concepts and API calls here [Seeker SDLC Integration](https://community.synopsys.com/s/article/Seeker-SDLC-Integration)
+If you would like to know more about building Seeker SDLC integrations you can read about the underlying concepts and API calls here [Seeker SDLC Integration](https://community.synopsys.com/s/article/Seeker-SDLC-Integration).
 
 ## Available Actions
 
@@ -19,103 +19,122 @@ There are multiple actions available and you don't need to use them all. Here's 
 
 Note that GitHub issues can be created automatically for any new Seeker vulnerabilities detected in your repo. However, you don't need GitHub actions for that. See [Seeker SDLC Integration](https://community.synopsys.com/s/article/Seeker-SDLC-Integration) for more details, and the example `create.sh` script below.
 
-## Code in Main
+## Getting Started with Seeker and GitHub Actions
 
-Install the dependencies
+This section will walk you though the a basic - yet effective - implementation of Seeker in your GitHub actions workflows.
 
-```bash
-npm install
-```
+### Step 1 - Environment Variables
 
-Run the tests :heavy_check_mark:
-
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-const core = require('@actions/core');
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run prepare
-
-```bash
-npm run prepare
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-git checkout -b v1
-git commit -a -m "v1 release"
-```
-
-```bash
-git push origin v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
+You can set these values as inputs on the individual steps if you prefer, but since they are used everywhere it can be easier to set them up at the beginning of your job(s):
 
 ```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
+env:
+  SEEKER_SERVER_URL: https://server.synopsysseeker.com:8443
+  SEEKER_PROJECT_KEY: HIPPOTECH-GITHUB
+  SEEKER_API_TOKEN: ${{ secrets.SEEKER_API_TOKEN }}
+  SEEKER_PROJECT_VERSION: ${{ github.run_number }}
 ```
 
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+Note that you will need a GitHub secret to securely store your Seeker API token.
+
+`SEEKER_PROJECT_VERSION` is optional, in case you are not using project versioning in Seeker. However, some useful features like automatically changing the status of newly fixed vulnerabilities require this. You enable and configure version management on a project-by-project basis in the Seeker UI, or use project templates to do so. 
+
+### Step 2 - Add The Seeker Agent
+
+Before you can add the Seeker agent to your test environment you will need to get your hands on it! There's nothing stopping you downloading the agent binaries from the Seeker UI, or via the API with `curl`, but the `download-seeker-agent` acts as a handy wrapper. You will need to specifiy two inputs:
+
+* `technology` one of JAVA, DOTNETCORE, DOTNET, NODEJS, PHP, GO, PYTHON
+* `osFamily` one of LINUX, WINDOWS, MAC
+
+to make sure that the Seeker server gives you the right agent. This action will create a directory `./seeker` under the current working directory and dowload the agent binarie there. At this point you will need to configure your application testing environment to include the agent as usual. Here's an example using Java:
+
+```yaml
+- name: Add Seeker agent
+  uses: mtolley/seeker-github-actions/download-seeker-agent@v1.1
+  with:
+    technology: JAVA
+    osFamily: LINUX
+
+- name: Start application for testing
+  run: |
+    export JAVA_TOOL_OPTIONS=-javaagent:`pwd`/seeker/seeker-agent.jar
+    ./scripts/start.sh
+```
+
+### Step 3 - Testing
+
+At this point your workflow does whatever your workflow needs to do to run those tests! Seeker should be watching in the background building up a picture of any new or old vulnerabilties detected during this test run.
+
+### Step 4 - Making Use Of The Results
+
+Once testing is complete you can use the remaining Seeker actions to do something useful with the results. Here's a representative example that:
+
+* Writes a summary of any Critical or High impact vulnerabilities detected into the build output.
+* Checks the Seeker Compliance status for the project and adds a PDF report to the build as an artefact.
+* Fails the build if the projet is **not** compliant.
+* Looks for any old vulnerabilities that were **not** detected during the most recent test run, and automatically sets their status to FIXED. And also closes any associated GitHub issues.
+
+```yaml
+- name: List Seeker Vulnerabilities
+  uses: mtolley/seeker-github-actions/list-seeker-vulnerabilities@v1.1
+  with:
+    minSeverity: HIGH
+    onlySeekerVerified: false
+
+- name: Seeker Compliance Reporting
+  uses: mtolley/seeker-github-actions/seeker-compliance-reporting@v1.1
+  with:
+    generateComplianceReportPDF: true
+    failBuildIfNotInCompliance: true
+
+- name: Mark Undetected Vulnerabilities As Fixed
+  uses: mtolley/seeker-github-actions/fix-undetected-vulnerabilities@v1.1
+  with:
+    closeFixedIssues: true
+    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Exporting Seeker Findings as GitHub Issues
+
+Whether you want to export issues from Seeker to GitHub manually in the Seeker UI, or automatically as a result of any new findings detected during your GitHub actions workflows, you will need to enable external bug tracking integration on your Seeker server. See *Integrate External Bug Tracking Systems* in the Seeker online help, and [Seeker SDLC Integration](https://community.synopsys.com/s/article/Seeker-SDLC-Integration) on the Synopsys Community website for more details. Here's an example of a simple script that will enable this integration for GitHub issues on your Seeker server: just remember that you will need to add a little logic in this script to map the Seeker project key (SEEKER_PROJECT_KEY) that is specified for any new issues to your GitHub repo.
+
+```bash
+# create.sh
+# #################################################################################
+# Step 1 - Set up GitHub connection details. The GitHub token should be a carefully
+# protected secret. If your repo name is not the same as your Seeker project key
+# you will need to do the mapping here.
+# #################################################################################
+GITHUB_TOKEN=<redacted>
+GITHUB_USER=<username>
+GITHUB_URL=https://api.github.com/repos
+GITHUB_REPO=<repository>
+
+# ################################################################################
+# Step 2 - Escape the SEEKER_TICKET_DESCRIPTION for passing to GitHub in JSON
+# ################################################################################
+TITLE=$(echo "$SEEKER_TICKET_SUMMARY"     | tr -d '\n' | jq -aRs)
+BODY=$(echo  "$SEEKER_TICKET_DESCRIPTION" | tr -d '\n' | jq -aRs)
+
+# ################################################################################
+# Step 2 - POST the new issue to GitHub
+# ################################################################################
+PAYLOAD=$(printf '{"title": %s, "body": %s}' "$TITLE" "$BODY")
+
+result=$(curl -s \
+  -X POST \
+  -u "$GITHUB_USER:$GITHUB_TOKEN" \
+  -H "Accept: application/vnd.github.v3+json" \
+  -d  "$PAYLOAD" \
+  "${GITHUB_URL}/${GITHUB_USER}/${GITHUB_REPO}/issues")
+
+# ################################################################################
+# Step 3 - extract the URL of the new issue in GitHub
+# ################################################################################
+URL=$(printf  %s "$result" | jq -r '.["html_url"]')
+
+# ################################################################################
+# Step 4 - provide the extracted issue URL to Seeker via stdout
+# ################################################################################
+printf '<SUCCESS:{"url":"%s"}>' "$URL"
+```
