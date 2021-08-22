@@ -37,7 +37,7 @@ env:
 
 Note that you will need a GitHub secret to securely store your Seeker API token.
 
-`SEEKER_PROJECT_VERSION` is optional, in case you are not using project versioning in Seeker. However, some useful features like automatically changing the status of newly fixed vulnerabilities require this. You enable and configure version management on a project-by-project basis in the Seeker UI, or use project templates to do so. 
+`SEEKER_PROJECT_VERSION` is optional, in case you are not using project versioning in Seeker. However, some useful features like automatically changing the status of newly fixed vulnerabilities require this. You enable and configure version management on a project-by-project basis in the Seeker UI, or use project templates to do so. Here we are simply taking the GitHub run number as the Seeker project "version", but you are free to construct and provide a version string however you want.
 
 ### Step 2 - Add The Seeker Agent
 
