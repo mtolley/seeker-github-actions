@@ -29,7 +29,7 @@ You can set these values as inputs on the individual steps if you prefer, but si
 
 ```yaml
 env:
-  SEEKER_SERVER_URL: https://server.synopsysseeker.com:8443
+  SEEKER_SERVER_URL: https://your.seeker.server
   SEEKER_PROJECT_KEY: HIPPOTECH-GITHUB
   SEEKER_API_TOKEN: ${{ secrets.SEEKER_API_TOKEN }}
   SEEKER_PROJECT_VERSION: ${{ github.run_number }}
