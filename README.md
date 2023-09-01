@@ -33,6 +33,7 @@ env:
   SEEKER_PROJECT_KEY: HIPPOTECH-GITHUB
   SEEKER_API_TOKEN: ${{ secrets.SEEKER_API_TOKEN }}
   SEEKER_PROJECT_VERSION: ${{ github.run_number }}
+  SEEKER_ACCESS_TOKEN: ${{ secrets.SEEKER_ACCESS_TOKEN }} #If agent authentication is enabled. Access Token type in Seeker: Agent authentication
 ```
 
 Note that you will need a GitHub secret to securely store your Seeker API token.
@@ -45,6 +46,10 @@ Before you can add the Seeker agent to your test environment you will need to ge
 
 * `technology` one of JAVA, DOTNETCORE, DOTNET, NODEJS, PHP, GO, PYTHON
 * `osFamily` one of LINUX, WINDOWS, MAC
+
+Following inputs are available, but not required:
+* `seekerAgentToken` access token for agent authentication. Required if agent authentication is enabled from Seeker. Can be given also via environment variables (see above)
+* `agentName` friendly name for the agent. 
 
 to make sure that the Seeker server gives you the right agent. This action will create a directory `./seeker` under the current working directory and dowload the agent binarie there. At this point you will need to configure your application testing environment to include the agent as usual. Here's an example using Java:
 
