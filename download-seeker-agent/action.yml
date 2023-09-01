@@ -9,11 +9,11 @@ inputs:
     description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
     required: true
   seekerAgentName: 
-    description: 'Seeker Agent Friendly Name - will fall back to the environment variable SEEKER_AGENT_NAME if not set.'
+    description: 'Seeker Agent Friendly Name - Can also be given via the environment variable SEEKER_AGENT_NAME'
     required: false
     default: ""
   seekerAgentToken: 
-    description: "Seeker agent access token (AccessToken type is Agent authetication). If Seeker agent authetication is enebled, then this is required. \
+    description: "Seeker agent access token (AccessToken type is Agent authentication). If Seeker agent authentication is enebled, then this is required. \
                   - will fall back to the environment variable SEEKER_ACCESS_KEY if not set."
     required: false
     default: ""
