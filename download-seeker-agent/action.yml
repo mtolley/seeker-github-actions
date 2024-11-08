@@ -22,6 +22,8 @@ inputs:
     required: true
   osFamily:
     description: 'OS Family - one of LINUX, WINDOWS, MAC'
+  webServer:
+    description: 'Web Server - one of DOTNETCORE_LINUX, GO_LINUX_AMD64_DEFAULT, GO_LINUX_ARM64_DEFAULT, GLASSFISH, GRAILS, JBOSS_STANDALONE, JBOSS_DOMAIN, JBOSS, JETTY, TOMCAT'
 runs:
   using: 'node12'
   main: '../lib/download-seeker-agent.js'

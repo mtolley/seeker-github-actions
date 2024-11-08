@@ -50,6 +50,7 @@ Before you can add the Seeker agent to your test environment you will need to ge
 Following inputs are available, but not required:
 * `seekerAgentToken` access token for agent authentication. Required if agent authentication is enabled from Seeker. Can be given also via environment variables (see above)
 * `agentName` friendly name for the agent. 
+* `webServer` Web Server - one of DOTNETCORE_LINUX, GO_LINUX_AMD64_DEFAULT, GO_LINUX_ARM64_DEFAULT, GLASSFISH, GRAILS, JBOSS_STANDALONE, JBOSS_DOMAIN, JBOSS, JETTY, TOMCAT
 
 to make sure that the Seeker server gives you the right agent. This action will create a directory `./seeker` under the current working directory and dowload the agent binarie there. At this point you will need to configure your application testing environment to include the agent as usual. Here's an example using Java:
 
