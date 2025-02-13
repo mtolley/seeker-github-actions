@@ -8,11 +8,22 @@ inputs:
   seekerProjectKey: 
     description: 'Seeker Project Key - will fall back to the environment variable SEEKER_PROJECT_KEY if not set.'
     required: true
+  seekerAgentToken: 
+    description: "Seeker agent access token (AccessToken type is Agent authentication). If Seeker agent authentication is enebled, then this is required. \
+                  - will fall back to the environment variable SEEKER_ACCESS_TOKEN if not set."
+    required: false
+    default: ""
+  agentName: 
+    description: 'Seeker Agent Friendly Name'
+    required: false
+    default: ""
   technology:
     description: 'Agent technology - one of JAVA, DOTNETCORE, DOTNET, NODEJS, PHP, GO, PYTHON'
     required: true
   osFamily:
     description: 'OS Family - one of LINUX, WINDOWS, MAC'
+  webServer:
+    description: 'Web Server - one of DOTNETCORE_LINUX, GO_LINUX_AMD64_DEFAULT, GO_LINUX_ARM64_DEFAULT, GLASSFISH, GRAILS, JBOSS_STANDALONE, JBOSS_DOMAIN, JBOSS, JETTY, TOMCAT'
 runs:
   using: 'node12'
   main: '../lib/download-seeker-agent.js'
